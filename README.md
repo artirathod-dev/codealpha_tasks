@@ -1,4 +1,4 @@
-# ArtiVerse – Royal Women's Fashion & Accessories (Django + HTML/CSS/JS)
+# Simple E-commerce Store – CodeAlpha
 
 A women-only fashion store built with **Django + SQLite**, plain HTML5, CSS3 and vanilla JavaScript (no frameworks).
 
