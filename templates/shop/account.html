@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}My Account – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="acct-hero">
+  <div class="container acct-hero-in">
+    <div class="avatar-xl">{% if avatar_url %}<img src="{{ avatar_url }}" alt="Your profile photo">{% else %}<span>{{ user.first_name|default:user.username|slice:":1"|upper }}</span>{% endif %}</div>
+    <div class="acct-who">
+      <span class="eyebrow">My account</span>
+      <h1>{{ user.get_full_name|default:user.username }}</h1>
+      <p>{{ user.email }}</p>
+      <p class="since">Member since {{ user.date_joined|date:"d M Y" }}</p>
+      <div class="photo-actions">
+        <form method="post" action="{% url 'account_photo' %}" enctype="multipart/form-data" id="photo-form">{% csrf_token %}
+          <label class="btn btn-light btn-sm" for="photo-input">{% if avatar_url %}Change photo{% else %}Add your photo{% endif %}</label>
+          <input id="photo-input" class="visually-hidden" type="file" name="photo" accept="image/jpeg,image/png,image/webp" data-autosubmit>
+        </form>
+        {% if avatar_url %}<form method="post" action="{% url 'account_photo_remove' %}">{% csrf_token %}<button class="photo-remove" type="submit">Remove</button></form>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section"><div class="container" style="max-width:900px">
+  <div class="acct-menu">
+    <a href="{% url 'order_list' %}"><b>My Orders</b><small>{{ order_count }} order{{ order_count|pluralize }} · track, view or cancel</small><i>›</i></a>
+    <a href="{% url 'wishlist' %}"><b>Wishlist</b><small>{{ wishlist_count }} saved item{{ wishlist_count|pluralize }}</small><i>›</i></a>
+    <a href="{% url 'cart' %}"><b>Shopping bag</b><small>{{ cart_count }} item{{ cart_count|pluralize }} in your bag</small><i>›</i></a>
+    <a href="{% url 'logout' %}" class="logout"><b>Logout</b><small>Sign out of your account</small><i>›</i></a>
+  </div>
+
+  <h3 class="recent-h">Recent orders</h3>
+  {% for o in recent %}<div class="order-card"><div class="top" style="margin:0"><div><b>#{{ o.order_number }}</b><br><small style="color:var(--taupe)">{{ o.created|date:"d M Y" }}</small></div><span class="status {{ o.status }}">{{ o.get_status_display }}</span><b style="color:var(--terra-dark)">₹{{ o.total|floatformat:0 }}</b><a class="btn btn-outline btn-sm" href="{% url 'order_detail' o.order_number %}">View</a></div></div>
+  {% empty %}<p style="color:var(--taupe)">No orders yet.</p>{% endfor %}
+</div></section>
+{% endblock %}

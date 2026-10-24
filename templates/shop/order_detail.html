@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% load static artiverse %}
+{% block title %}Order #{{ order.order_number }} – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="page-head"><div class="container"><div class="crumbs" style="margin:0"><a href="{% url 'order_list' %}">My Orders</a> / #{{ order.order_number }}</div><h1>Order #{{ order.order_number }}</h1><p>Placed on {{ order.created|date:"d M Y, h:i A" }} · <span class="status {{ order.status }}">{{ order.get_status_display }}</span></p></div></div>
+<section class="section"><div class="container" style="max-width:900px">
+  {% if order.status != 'cancelled' %}
+  <div class="order-card"><div class="timeline">{% for s in steps %}<div class="st {% if forloop.counter0 <= reached %}done{% endif %}"><div class="dot">{% if forloop.counter0 <= reached %}✓{% else %}{{ forloop.counter }}{% endif %}</div>{{ s|title }}</div>{% endfor %}</div></div>
+  {% endif %}
+  <div class="order-card">
+    <table class="tbl"><thead><tr><th>Item</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Subtotal</th></tr></thead><tbody>
+      {% for i in order.items.all %}<tr><td><div style="display:flex;gap:10px;align-items:center">{% if i.image %}<img src="{{ i.image|photo }}" alt="" style="width:46px;height:46px;border-radius:8px;object-fit:cover">{% endif %}<div>{{ i.name }}{% if i.size %}<br><small style="color:var(--muted)">Size {{ i.size }}</small>{% endif %}</div></div></td><td class="r">₹{{ i.price|floatformat:0 }}</td><td class="r">{{ i.quantity }}</td><td class="r">₹{{ i.subtotal|floatformat:0 }}</td></tr>{% endfor %}
+    </tbody></table>
+    <div class="summary" style="box-shadow:none;padding:12px 0 0;position:static;max-width:320px;margin-left:auto">
+      <div class="line"><span>Subtotal</span><span>₹{{ order.subtotal|floatformat:0 }}</span></div>
+      <div class="line"><span>Shipping</span><span>{% if order.shipping %}₹{{ order.shipping|floatformat:0 }}{% else %}FREE{% endif %}</span></div>
+      <div class="line total"><span>Total</span><span>₹{{ order.total|floatformat:0 }}</span></div></div>
+  </div>
+  <div class="order-card"><h3 style="margin-bottom:8px">Delivery &amp; payment</h3>
+    <p>{{ order.full_name }}<br>{{ order.address }}<br>{{ order.city }}, {{ order.state }} – {{ order.postal_code }}<br> {{ order.phone }}</p>
+    <p style="margin-top:8px;color:var(--muted)">Payment: {{ order.get_payment_method_display }}</p></div>
+  {% if order.status == 'placed' %}<form method="post" action="{% url 'order_cancel' order.order_number %}" onsubmit="return confirm('Cancel this order?')">{% csrf_token %}<button class="btn btn-outline" style="color:var(--bad);border-color:var(--bad)" type="submit">Cancel order</button></form>{% endif %}
+</div></section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% load static artiverse %}
+{% block title %}My Orders – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="page-head"><div class="container"><h1>My Orders</h1><p>Your order history.</p></div></div>
+<section class="section"><div class="container" style="max-width:900px">
+{% for o in orders %}
+  <div class="order-card reveal">
+    <div class="top"><div><b>#{{ o.order_number }}</b><br><small style="color:var(--muted)">{{ o.created|date:"d M Y, h:i A" }}</small></div>
+      <div><span class="status {{ o.status }}">{{ o.get_status_display }}</span></div>
+      <div style="text-align:right"><b style="color:var(--brand);font-size:1.15rem">₹{{ o.total|floatformat:0 }}</b><br><small style="color:var(--muted)">{{ o.get_payment_method_display }}</small></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="thumbs">{% for i in o.items.all|slice:":5" %}{% if i.image %}<img src="{{ i.image|photo }}" alt="{{ i.name }}" title="{{ i.name }} × {{ i.quantity }}">{% endif %}{% endfor %}</div>
+      <span style="color:var(--muted);font-size:.9rem">{{ o.items.count }} item{{ o.items.count|pluralize }}</span>
+      <a class="btn btn-outline btn-sm" href="{% url 'order_detail' o.order_number %}">View details</a></div>
+  </div>
+{% empty %}
+  <div class="empty"><h2>No orders yet</h2><p>When you place an order, it will show up here.</p><a class="btn" href="{% url 'product_list' %}">Start shopping</a></div>
+{% endfor %}
+</div></section>
+{% endblock %}

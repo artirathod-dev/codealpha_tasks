@@ -1,0 +1,42 @@
+{% extends "base.html" %}{% load static artiverse %}
+{% block title %}Your Cart – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="page-head"><div class="container"><h1> Your Shopping Bag</h1><p>Review your items before checkout.</p></div></div>
+<section class="section"><div class="container">
+{% if items %}
+  <div class="cart-layout">
+    <div id="cart-items">
+      {% for i in items %}
+      <div class="cart-item" data-update="{% url 'cart_update' i.id %}" data-remove="{% url 'cart_remove' i.id %}">
+        <a href="{{ i.product.get_absolute_url }}"><img src="{{ i.product.image|photo }}" alt="{{ i.product.name }}"></a>
+        <div>
+          <h3><a href="{{ i.product.get_absolute_url }}">{{ i.product.name }}</a></h3>
+          <div class="meta">{{ i.product.category.name }}{% if i.size %} · Size {{ i.size }}{% endif %} · ₹{{ i.product.price|floatformat:0 }} each</div>
+          {% if i.quantity > i.product.stock %}<div class="warn"> Only {{ i.product.stock }} in stock – please reduce the quantity.</div>{% endif %}
+          <div class="controls">
+            <div class="qty"><button type="button" data-act="dec" aria-label="Decrease">−</button><span class="qty-val" style="min-width:40px;text-align:center;font-weight:700">{{ i.quantity }}</span><button type="button" data-act="inc" aria-label="Increase">+</button></div>
+            <button type="button" class="remove" data-act="remove">Remove</button>
+          </div>
+        </div>
+        <div class="sub item-sub">₹{{ i.subtotal|floatformat:0 }}</div>
+      </div>
+      {% endfor %}
+      <a href="{% url 'product_list' %}" class="link-arrow"> Continue shopping</a>
+    </div>
+    <aside class="summary">
+      <h3>Order Summary</h3>
+      <div class="progress"><i id="free-bar" data-goal="{{ FREE_SHIPPING_ABOVE }}" style="width:{% if free_left == 0 %}100{% else %}0{% endif %}%"></i></div>
+      <div class="free-note" id="free-note">{% if free_left > 0 %}Add ₹{{ free_left|floatformat:0 }} more for FREE shipping!{% else %} You've unlocked FREE shipping!{% endif %}</div>
+      <div class="line"><span>Subtotal</span><span id="sum-subtotal">₹{{ subtotal|floatformat:0 }}</span></div>
+      <div class="line"><span>Shipping</span><span id="sum-shipping">{% if shipping %}₹{{ shipping|floatformat:0 }}{% else %}FREE{% endif %}</span></div>
+      <div class="line total"><span>Total</span><span id="sum-total">₹{{ total|floatformat:0 }}</span></div>
+      {% if has_problem %}<p class="warn" style="margin:10px 0">Fix the stock warnings above to continue.</p>{% endif %}
+      <a href="{% url 'checkout' %}" class="btn btn-block" style="margin-top:14px">Proceed to Checkout </a>
+    </aside>
+  </div>
+  <script>document.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("free-bar");if(b){var g=+b.dataset.goal,left={{ free_left|floatformat:0 }};b.style.width=Math.min(100,(g-left)/g*100)+"%";}});</script>
+{% else %}
+  <div class="empty"><h2>Your cart is empty</h2><p>Looks like you haven't added anything yet.</p><a class="btn" href="{% url 'product_list' %}">Start shopping</a></div>
+{% endif %}
+</div></section>
+{% endblock %}

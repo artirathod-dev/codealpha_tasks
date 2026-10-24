@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% load artiverse %}
+{% block title %}Register – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="auth">
+  <div class="auth-side">
+    <span class="eyebrow gold">Join the maison</span><h1>Join <em>{{ STORE_NAME }}</em> today</h1><div class="ornament left"><i></i><b></b><i></i></div><p>Create a free account to shop faster, save favourites and track your orders.</p>
+    <ul><li>Free to join</li><li>Passwords stored securely (hashed)</li><li>Cash on Delivery available</li></ul>
+    <span class="auth-arch" aria-hidden="true"><img src="{{ 'img/products/crystal-cascade-bridal-necklace.jpg'|photo }}" alt=""></span></div>
+  <div class="auth-main"><div class="form-card">
+    <h2>Create account</h2><p class="sub">It only takes a moment.</p>
+    <form method="post" data-once novalidate>{% csrf_token %}
+      <div class="form-group {% if form.name.errors %}has-error{% endif %}"><label for="id_name">Full name</label>{{ form.name }}{% for e in form.name.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+      <div class="form-group {% if form.email.errors %}has-error{% endif %}"><label for="id_email">Email</label>{{ form.email }}{% for e in form.email.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+      <div class="form-group {% if form.password.errors %}has-error{% endif %}"><label for="id_password">Password</label><div class="pw-wrap">{{ form.password }}</div><div class="strength" id="strength"><i></i></div>{% for e in form.password.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+      <div class="form-group {% if form.confirm_password.errors %}has-error{% endif %}"><label for="id_confirm_password">Confirm password</label><div class="pw-wrap">{{ form.confirm_password }}</div>{% for e in form.confirm_password.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+      <button class="btn btn-block" type="submit">Register</button>
+    </form>
+    <p class="auth-alt">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+  </div></div>
+</div>
+<script>document.addEventListener("DOMContentLoaded",function(){var p=document.getElementById("id_password");if(p)p.setAttribute("data-strength","1");});</script>
+{% endblock %}

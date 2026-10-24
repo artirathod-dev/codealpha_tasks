@@ -1,0 +1,37 @@
+{% extends "base.html" %}{% load static artiverse %}
+{% block title %}Checkout – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="page-head"><div class="container"><h1>Checkout</h1><p>Enter your delivery details and place your order.</p></div></div>
+<section class="section"><div class="container">
+<form method="post" data-once novalidate>{% csrf_token %}
+<div class="checkout-layout">
+  <div class="form-card">
+    <h3 style="margin-bottom:16px"> Delivery details</h3>
+    {% if form.errors %}<div class="alert">Please fix the highlighted fields below.</div>{% endif %}
+    <div class="two">
+      <div class="form-group {% if form.full_name.errors %}has-error{% endif %}"><label for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>{{ form.full_name }}{% for e in form.full_name.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+      <div class="form-group {% if form.phone.errors %}has-error{% endif %}"><label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>{{ form.phone }}{% for e in form.phone.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+    </div>
+    <div class="form-group {% if form.address.errors %}has-error{% endif %}"><label for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>{{ form.address }}{% for e in form.address.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+    <div class="two">
+      <div class="form-group {% if form.city.errors %}has-error{% endif %}"><label for="{{ form.city.id_for_label }}">City</label>{{ form.city }}{% for e in form.city.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+      <div class="form-group {% if form.state.errors %}has-error{% endif %}"><label for="{{ form.state.id_for_label }}">State</label>{{ form.state }}{% for e in form.state.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+    </div>
+    <div class="form-group {% if form.postal_code.errors %}has-error{% endif %}" style="max-width:240px"><label for="{{ form.postal_code.id_for_label }}">{{ form.postal_code.label }}</label>{{ form.postal_code }}{% for e in form.postal_code.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+    <h3 style="margin:22px 0 12px"> Payment method</h3>
+    {% for radio in form.payment_method %}<label class="pay-opt">{{ radio.tag }} <span>{{ radio.choice_label }}</span></label>{% endfor %}
+    <div id="demo-note" class="demo-note">This is a simulated payment for demonstration. No card details are collected and no money is charged – your order is saved as “Demo Online Payment”.</div>
+  </div>
+  <aside class="summary">
+    <h3>Order Summary</h3>
+    {% for i in items %}<div class="mini"><img src="{{ i.product.image|photo }}" alt=""><div>{{ i.product.name }}<br><small>Qty {{ i.quantity }}{% if i.size %} · Size {{ i.size }}{% endif %}</small></div><b>₹{{ i.subtotal|floatformat:0 }}</b></div>{% endfor %}
+    <div class="line" style="margin-top:10px"><span>Subtotal</span><span>₹{{ subtotal|floatformat:0 }}</span></div>
+    <div class="line"><span>Shipping</span><span>{% if shipping %}₹{{ shipping|floatformat:0 }}{% else %}FREE{% endif %}</span></div>
+    <div class="line total"><span>Total</span><span>₹{{ total|floatformat:0 }}</span></div>
+    <button class="btn btn-block" style="margin-top:16px" type="submit">Place order</button>
+    <p class="hint" style="text-align:center;margin-top:10px">The final amount is recalculated securely on our server.</p>
+    <a href="{% url 'cart' %}" class="link-arrow" style="display:block;text-align:center;margin-top:8px"> Back to cart</a>
+  </aside>
+</div></form>
+</div></section>
+{% endblock %}

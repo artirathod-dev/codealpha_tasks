@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% load artiverse %}
+{% block title %}Login – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="auth">
+  <div class="auth-side">
+    <span class="eyebrow gold">Welcome back</span><h1>Welcome to <em>{{ STORE_NAME }}</em></h1><div class="ornament left"><i></i><b></b><i></i></div><p>Sarees, gowns, jewellery, chashmas, watches, perfumes, heels &amp; bags – all in one royal place.</p>
+    <ul><li>Save favourites to your wishlist</li><li>Your cart stays with you</li><li>Track every order</li></ul>
+    <span class="auth-arch" aria-hidden="true"><img src="{{ 'img/products/peacock-green-silk-saree-with-purple-border.jpg'|photo }}" alt=""></span></div>
+  <div class="auth-main"><div class="form-card">
+    <h2>Login</h2><p class="sub">Enter your email and password to continue.</p>
+    {% if form.non_field_errors %}<div class="alert">{{ form.non_field_errors.0 }}</div>{% endif %}
+    <form method="post" data-once>{% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="form-group {% if form.username.errors %}has-error{% endif %}"><label for="id_username">Email</label>{{ form.username }}{% for e in form.username.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+      <div class="form-group {% if form.password.errors %}has-error{% endif %}"><label for="id_password">Password</label><div class="pw-wrap">{{ form.password }}</div>{% for e in form.password.errors %}<span class="errmsg">{{ e }}</span>{% endfor %}</div>
+      <div style="text-align:right;margin:-6px 0 14px"><a href="{% url 'password_reset' %}" style="color:var(--brand);font-size:.88rem;font-weight:600">Forgot password?</a></div>
+      <button class="btn btn-block" type="submit">Login</button>
+    </form>
+    <p class="auth-alt">New here? <a href="{% url 'register' %}">Create an account</a></p>
+  </div></div>
+</div>
+{% endblock %}

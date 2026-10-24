@@ -1,0 +1,22 @@
+{% load static artiverse %}
+<article class="card reveal" data-group="{{ p.category.group }}" data-family="{{ p.family|default:'' }}" {% if wish_card %}data-wish-card{% endif %}>
+  <div class="imgwrap">
+    <a href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true"><img src="{{ p.image|photo }}" alt="{{ p.name }}" loading="lazy" width="400" height="500"></a>
+    {% if not p.in_stock %}<span class="tag tag-out">Sold out</span>{% elif p.discount_percent >= 45 %}<span class="tag tag-sale">{{ p.discount_percent }}% off</span>{% elif p.featured %}<span class="tag tag-best">Bestseller</span>{% endif %}
+    <button type="button" class="wish {% if p.id in wishlist_ids %}on{% endif %}" data-url="{% url 'wishlist_toggle' p.id %}" aria-label="Save {{ p.name }} to wishlist">♥</button>
+  </div>
+  <div class="body">
+    <span class="cat">{{ p.category.name }}</span>
+    <h3><a href="{{ p.get_absolute_url }}">{{ p.name }}</a></h3>
+    <div class="price"><b>₹{{ p.price|floatformat:0 }}</b>{% if p.mrp %}<s>₹{{ p.mrp|floatformat:0 }}</s>{% endif %}</div>
+    <div class="actions">
+      <a class="btn btn-outline btn-sm" href="{{ p.get_absolute_url }}">Details</a>
+      {% if p.size_list %}
+        <a class="btn btn-sm" href="{{ p.get_absolute_url }}#buy">Select size</a>
+      {% else %}
+        <form class="js-add-cart" method="post" action="{% url 'cart_add' p.id %}" style="display:contents">{% csrf_token %}
+          <button type="submit" class="btn btn-sm" {% if not p.in_stock %}disabled{% endif %}>Add to cart</button></form>
+      {% endif %}
+    </div>
+  </div>
+</article>

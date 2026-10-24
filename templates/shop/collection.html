@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ section.name }} – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="page-head royal"><div class="container center">
+  <span class="eyebrow gold">ArtiVerse</span>
+  <div class="crumbs"><a href="{% url 'home' %}">Home</a> / {{ section.name }}</div>
+  <h1>{{ section.name }}</h1>
+  <div class="ornament"><i></i><b></b><i></i></div>
+  <p>{{ section.blurb }}</p>
+</div></div>
+
+{% for f in families %}
+<section class="section{% cycle '' ' tint' %}">
+  <div class="container">
+    <div class="section-head reveal"><div><span class="eyebrow">{{ f.total }} piece{{ f.total|pluralize }}</span><h2>{{ f.name }}</h2></div><a class="link-arrow" href="{{ f.get_absolute_url }}">View all {{ f.name }} </a></div>
+    <div class="cat-grid">
+      {% for c in f.kids %}{% include "shop/_tile.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endfor %}
+
+{% if singles %}
+<section class="section{% if families|length|divisibleby:2 %}{% else %} tint{% endif %}">
+  <div class="container">
+    <div class="section-head reveal"><div><span class="eyebrow">Explore</span><h2>More in <em>{{ section.name }}</em></h2></div></div>
+    <div class="cat-grid">
+      {% for c in singles %}{% include "shop/_tile.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="section-head reveal"><div><span class="eyebrow">Handpicked</span><h2>Featured in <em>{{ section.name }}</em></h2></div><a class="link-arrow" href="{% url 'product_list' %}?group={{ group }}">Browse all {{ total }} </a></div>
+    <div class="grid">{% for p in featured %}{% include "shop/_card.html" %}{% endfor %}</div>
+  </div>
+</section>
+{% endblock %}

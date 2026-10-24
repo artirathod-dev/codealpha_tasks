@@ -1,0 +1,146 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="{{ csrf_token }}">
+<title>{% block title %}{{ STORE_NAME }} | Royal Women's Fashion &amp; Accessories{% endblock %}</title>
+<meta name="description" content="{{ STORE_NAME }} – royal women's fashion: sarees, gowns, jewellery, heels, bags, watches and more.">
+<meta name="theme-color" content="#2A0B14">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%235C1026'/><rect x='6' y='6' width='88' height='88' rx='13' fill='none' stroke='%23E3C98A' stroke-width='2'/><text x='50' y='68' font-size='56' text-anchor='middle' font-family='Georgia,serif' fill='%23E3C98A'>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Great+Vibes&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="site">
+<div class="announce" role="region" aria-label="Announcements">
+  <div class="announce-inner">
+    <span class="announce-msg is-on">Royal collections for the modern queen</span>
+    <span class="announce-msg">Free delivery above ₹{{ FREE_SHIPPING_ABOVE }}</span>
+    <span class="announce-msg">Cash on Delivery available</span>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container brandrow">
+    <div class="brand-left">
+      <button id="menu-toggle" class="icon-btn menu-toggle" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      {% if user.is_authenticated %}
+      <a href="{% url 'account' %}" class="acct{% if request.resolver_match.url_name == 'account' %} active{% endif %}" aria-label="My account">
+        <span class="avatar-sm">{% if avatar_url %}<img src="{{ avatar_url }}" alt="">{% else %}{{ user.first_name|default:user.username|slice:":1"|upper }}{% endif %}</span>
+        <span class="acct-name">{{ user.first_name|default:"Account" }}</span>
+      </a>
+      {% else %}
+      <a href="{% url 'login' %}" class="acct" aria-label="Login">
+        <span class="avatar-sm"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span>
+        <span class="acct-name">Login</span>
+      </a>
+      {% endif %}
+    </div>
+    <a href="{% url 'home' %}" class="logo-wrap" aria-label="{{ STORE_NAME }} home">
+      <span class="logo">Arti<em>Verse</em></span>
+      <span class="logo-sub"><i></i>Royal Fashion &amp; Accessories<i></i></span>
+    </a>
+    <div class="nav-tools">
+      <a href="{% url 'wishlist' %}" class="icon-btn" aria-label="Wishlist">
+        <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+      </a>
+      <a href="{% url 'cart' %}" class="icon-btn bag" aria-label="Shopping bag">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+        <span id="cart-badge" class="badge" {% if not cart_count %}hidden{% endif %}>{{ cart_count }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="searchrow">
+    <div class="container">
+      <div class="search" role="search">
+        <form action="{% url 'product_list' %}" method="get" autocomplete="off">
+          <input id="search-input" data-url="{% url 'search_suggest' %}" type="search" name="q" value="{{ q|default:'' }}" placeholder="Search sarees, necklaces, heels, perfumes…" aria-label="Search products">
+          <button type="submit" aria-label="Search">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+          </button>
+        </form>
+        <div id="suggest" class="suggest"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="navbar">
+    <div class="container navbar-in">
+      <nav id="nav-links" class="nav-links" aria-label="Main menu">
+        <div class="nav-item"><a class="nav-top{% if nav_active == 'home' %} active{% endif %}" href="{% url 'home' %}">Home</a></div>
+
+        {% if nav_sarees %}
+        <div class="nav-item has-mega">
+          <a class="nav-top{% if nav_active == 'sarees' %} active{% endif %}" href="{{ nav_sarees.get_absolute_url }}">Sarees</a>
+          <button type="button" class="nav-caret" aria-label="Show saree types" aria-expanded="false"></button>
+          <div class="mega mega-narrow">
+            <div class="container mega-in">
+              <div class="mega-col">
+                <a class="mega-title" href="{{ nav_sarees.get_absolute_url }}">All Sarees</a>
+                {% for k in nav_sarees.kids %}<a href="{{ k.get_absolute_url }}">{{ k.name }}</a>{% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% for g in nav_groups %}
+        <div class="nav-item has-mega">
+          <a class="nav-top{% if nav_active == g.key %} active{% endif %}" href="{% url 'collection' g.key %}">{{ g.label }}</a>
+          <button type="button" class="nav-caret" aria-label="Show {{ g.label }} options" aria-expanded="false"></button>
+          <div class="mega">
+            <div class="container mega-in">
+              {% for col in g.columns %}
+              <div class="mega-col">
+                {% if col.head %}<a class="mega-title" href="{{ col.head.get_absolute_url }}">{{ col.title }}</a>
+                {% else %}<span class="mega-title">{{ col.title }}</span>{% endif %}
+                {% for c in col.links %}<a href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% endfor %}
+              </div>
+              {% endfor %}
+              <a class="mega-all" href="{% url 'collection' g.key %}">View all {{ g.label }} <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="nav-item"><a class="nav-top{% if nav_active == 'shop' %} active{% endif %}" href="{% url 'product_list' %}">All Products</a></div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+{% if messages %}<div class="messages" aria-live="polite">{% for m in messages %}<div class="toast {{ m.tags }}"><span>{{ m }}</span><button aria-label="Close">×</button></div>{% endfor %}</div>{% endif %}
+
+<main id="main">{% block content %}{% endblock %}</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <a class="logo" href="{% url 'home' %}">Arti<em>Verse</em></a>
+      <p>Royal fashion and accessories for women – silk sarees, couture gowns, heirloom-style jewellery, heels and bags, chosen for beauty, fit and longevity.</p>
+    </div>
+    {% for g in nav_groups %}
+    <div><h4>{{ g.label }}</h4>
+      <a href="{% url 'collection' g.key %}">All {{ g.label }}</a>
+      {% for c in g.top %}<a href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% endfor %}</div>
+    {% endfor %}
+    <div><h4>Account</h4>
+      {% if user.is_authenticated %}<a href="{% url 'account' %}">My account</a><a href="{% url 'order_list' %}">My orders</a><a href="{% url 'wishlist' %}">Wishlist</a><a href="{% url 'cart' %}">Shopping bag</a>
+      {% else %}<a href="{% url 'login' %}">Login</a><a href="{% url 'register' %}">Create account</a>{% endif %}</div>
+  </div>
+  <div class="container copy">© {% now "Y" %} {{ STORE_NAME }}. All rights reserved.</div>
+</footer>
+</div><!-- /.site -->
+<button id="to-top" class="to-top" aria-label="Back to top">↑</button>
+<script src="{% static 'js/main.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,137 @@
+{% extends "base.html" %}{% load static artiverse %}
+{% block content %}
+
+{# ============ ROYAL HERO ============ #}
+<section class="royal-hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="hero-kicker"><i></i>The Royal Collection<i></i></span>
+      <h1>Dressed in <em>royal</em> elegance</h1>
+      <p class="hero-script">for every celebration</p>
+      <p class="hero-text">Silk sarees, couture gowns, heirloom-style jewellery, statement heels and bags – curated for the modern queen.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold btn-lg" href="{% url 'product_list' %}?category=sarees">Shop Sarees</a>
+        <a class="btn btn-ghost btn-lg" href="{% url 'collection' 'accessories' %}">Explore Accessories</a>
+      </div>
+      <ul class="hero-points"><li>Free delivery above ₹{{ FREE_SHIPPING_ABOVE }}</li><li>Cash on Delivery</li><li>7-day exchange</li></ul>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <a class="arch arch-main" href="{% url 'product_list' %}?category=south-indian-sarees" tabindex="-1"><img src="{{ 'img/products/peacock-green-silk-saree-with-purple-border.jpg'|photo }}" alt=""></a>
+      <a class="arch arch-left" href="{% url 'product_list' %}?category=necklaces" tabindex="-1"><img src="{{ 'img/products/crystal-cascade-bridal-necklace.jpg'|photo }}" alt=""></a>
+      <a class="arch arch-right" href="{% url 'product_list' %}?category=heels" tabindex="-1"><img src="{{ 'img/products/burgundy-velvet-gold-leaf-pumps.jpg'|photo }}" alt=""></a>
+      <span class="hero-glow"></span>
+    </div>
+  </div>
+</section>
+
+<div class="gold-band" role="presentation"><span>Silk</span><i></i><span>Zari</span><i></i><span>Pearls</span><i></i><span>Crystals</span><i></i><span>Velvet</span><i></i><span>Gold</span></div>
+
+{# ============ THREE WORLDS ============ #}
+<section class="section">
+  <div class="container">
+    <div class="section-head center reveal"><div><span class="eyebrow">Enter the maison</span><h2>Three worlds of <em>ArtiVerse</em></h2><div class="ornament"><i></i><b></b><i></i></div></div></div>
+    <div class="worlds">
+      <a class="world reveal" href="{% url 'product_list' %}?category=sarees"><img src="{{ 'img/products/mustard-red-banarasi-brocade-saree.jpg'|photo }}" alt="" loading="lazy"><span class="lab"><small>Heritage weaves</small><b>Sarees</b><em>South Indian · Banarasi · Fancy · Party · Daily</em></span></a>
+      <a class="world reveal" href="{% url 'collection' 'clothing' %}"><img src="{{ 'img/products/lime-green-floral-lehenga-set.jpg'|photo }}" alt="" loading="lazy"><span class="lab"><small>Gowns &amp; ethnic</small><b>Clothing</b><em>Bodycon · Traditional · Kurtis · Western · Tops · Jeans</em></span></a>
+      <a class="world reveal" href="{% url 'collection' 'accessories' %}"><img src="{{ 'img/products/black-half-moon-bag-with-rose-gold-leaf-handle.jpg'|photo }}" alt="" loading="lazy"><span class="lab"><small>Finishing touches</small><b>Accessories</b><em>Jewellery · Chashmas · Watches · Perfumes · Heels · Bags</em></span></a>
+    </div>
+  </div>
+</section>
+
+{# ============ SHELF WITH BUTTONS ============ #}
+<section class="section tint">
+  <div class="container">
+    <div class="section-head center reveal"><div><span class="eyebrow">The edit</span><h2>Shop the <em>collection</em></h2><div class="ornament"><i></i><b></b><i></i></div></div></div>
+    <div class="pills center" role="group" aria-label="Filter products by category">
+      <a class="pill on" href="{% url 'product_list' %}" data-filter="all">All</a>
+      <a class="pill" href="{% url 'product_list' %}?category=sarees" data-filter="sarees">Sarees</a>
+      <a class="pill" href="{% url 'collection' 'clothing' %}" data-filter="clothing">Clothing</a>
+      <a class="pill" href="{% url 'product_list' %}?category=jewellery" data-filter="jewellery">Jewellery</a>
+      <a class="pill" href="{% url 'collection' 'accessories' %}" data-filter="accessories">Accessories</a>
+    </div>
+    <div class="grid" id="shelf">{% for p in shelf %}{% include "shop/_card.html" %}{% endfor %}</div>
+    <p class="center-link"><a class="link-arrow" id="shelf-more" href="{% url 'product_list' %}">View all products </a></p>
+  </div>
+</section>
+
+{# ============ SAREE GALLERY ============ #}
+{% if saree_types %}
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal"><div><span class="eyebrow">Drape of heritage</span><h2>The saree <em>gallery</em></h2></div><a class="link-arrow" href="{% url 'product_list' %}?category=sarees">All sarees </a></div>
+    <div class="arch-row">
+      {% for c in saree_types %}
+      <a class="arch-tile reveal" href="{{ c.get_absolute_url }}"><span class="arch-img"><img src="{{ c.image|photo }}" alt="{{ c.name }}" loading="lazy"></span><b>{{ c.name }}</b><small>{{ c.count }} style{{ c.count|pluralize }}</small></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ============ CLOTHING ============ #}
+{% if clothing_tiles %}
+<section class="section tint">
+  <div class="container">
+    <div class="section-head reveal"><div><span class="eyebrow">Wardrobe</span><h2>Shop <em>clothing</em></h2></div><a class="link-arrow" href="{% url 'collection' 'clothing' %}">All clothing </a></div>
+    <div class="cat-grid">
+      {% for c in clothing_tiles %}
+      <a class="cat-tile reveal" href="{{ c.get_absolute_url }}"><img src="{{ c.image|photo }}" alt="{{ c.name }}" loading="lazy"><span class="lab"><b>{{ c.name }}</b><small>{{ c.tagline }}</small></span></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ============ JEWELLERY ============ #}
+{% if jewellery_tiles %}
+<section class="section jewel-band">
+  <div class="container">
+    <div class="section-head center reveal"><div><span class="eyebrow gold">Heirloom sparkle</span><h2>Fine <em>jewellery</em></h2><div class="ornament"><i></i><b></b><i></i></div></div></div>
+    <div class="round-row">
+      {% for c in jewellery_tiles %}
+      <a class="round-tile reveal" href="{{ c.get_absolute_url }}"><span class="round-img"><img src="{{ c.image|photo }}" alt="{{ c.name }}" loading="lazy"></span><b>{{ c.name }}</b></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ============ ACCESSORIES ============ #}
+{% if accessory_tiles %}
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal"><div><span class="eyebrow">Finishing touches</span><h2>More <em>accessories</em></h2></div><a class="link-arrow" href="{% url 'collection' 'accessories' %}">All accessories </a></div>
+    <div class="cat-grid">
+      {% for c in accessory_tiles %}
+      <a class="cat-tile reveal" href="{{ c.get_absolute_url }}"><img src="{{ c.image|photo }}" alt="{{ c.name }}" loading="lazy"><span class="lab"><b>{{ c.name }}</b><small>{{ c.tagline }}</small></span></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if deals %}
+<section class="section tint">
+  <div class="container">
+    <div class="section-head reveal"><div><span class="eyebrow">Limited stock</span><h2>Seasonal <em>offers</em></h2></div></div>
+    <div class="grid">{% for p in deals %}{% include "shop/_card.html" %}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal"><div><span class="eyebrow">Fresh in</span><h2>New <em>arrivals</em></h2></div><a class="link-arrow" href="{% url 'product_list' %}?sort=new">Browse latest </a></div>
+    <div class="grid">{% for p in new_arrivals %}{% include "shop/_card.html" %}{% endfor %}</div>
+  </div>
+</section>
+
+<section class="perks-band">
+  <div class="container perks">
+    <div><b>Free delivery</b><small>On orders above ₹{{ FREE_SHIPPING_ABOVE }}</small></div>
+    <div><b>Cash on Delivery</b><small>Pay when it arrives</small></div>
+    <div><b>Easy exchange</b><small>7-day exchange window</small></div>
+    <div><b>Secure account</b><small>Passwords are hashed</small></div>
+  </div>
+</section>
+{% endblock %}

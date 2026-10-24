@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}My Wishlist – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="page-head"><div class="container"><h1>♥ My Wishlist</h1><p>Things you've saved for later.</p></div></div>
+<section class="section"><div class="container">
+{% if items %}<div class="grid">{% for w in items %}{% with p=w.product wish_card=True %}{% include "shop/_card.html" %}{% endwith %}{% endfor %}</div>
+{% else %}<div class="empty"><h2>Your wishlist is empty</h2><p>Tap the heart on any product to save it here.</p><a class="btn" href="{% url 'product_list' %}">Browse products</a></div>{% endif %}
+</div></section>
+{% endblock %}

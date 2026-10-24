@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{% if active_cat %}{{ active_cat.name }}{% elif q %}Search: {{ q }}{% else %}All Products{% endif %} – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<div class="page-head royal"><div class="container center"><span class="eyebrow gold">ArtiVerse</span>
+  <div class="crumbs"><a href="{% url 'home' %}">Home</a>{% if section %} / <a href="{% url 'collection' section_key %}">{{ section.name }}</a>{% endif %}{% if active_cat.parent %} / <a href="{{ active_cat.parent.get_absolute_url }}">{{ active_cat.parent.name }}</a>{% endif %}{% if active_cat %} / {{ active_cat.name }}{% elif not section %} / Products{% endif %}</div>
+  <h1>{% if active_cat %}{{ active_cat.name }}{% elif q %}Results for “{{ q }}”{% elif section %}{{ section.name }}{% else %}All Products{% endif %}</h1>
+  <div class="ornament"><i></i><b></b><i></i></div>
+  <p>{% if active_cat %}{{ active_cat.tagline }}{% elif section %}{{ section.blurb }}{% else %}Royal fashion and accessories, chosen for beauty, fit and longevity.{% endif %}</p>
+</div></div>
+<section class="section"><div class="container">
+  <div class="pills center" role="group" aria-label="Section">
+    <a class="pill {% if not section_key and not cat %}on{% endif %}" href="{% url 'product_list' %}">All</a>
+    <a class="pill {% if nav_active == 'sarees' %}on{% endif %}" href="{% url 'product_list' %}?category=sarees">Sarees</a>
+    {% for g in nav_groups %}<a class="pill {% if section_key == g.key and nav_active != 'sarees' %}on{% endif %}" href="{% url 'collection' g.key %}">{{ g.label }}</a>{% endfor %}
+  </div>
+  {% if family %}
+  <div class="pills center sub-pills" role="group" aria-label="{{ family.name }} types">
+    <a class="pill {% if active_cat.slug == family.slug %}on{% endif %}" href="{{ family.get_absolute_url }}">All {{ family.name }}</a>
+    {% for k in family.kids %}<a class="pill {% if active_cat.slug == k.slug %}on{% endif %}" href="{{ k.get_absolute_url }}">{{ k.name }}</a>{% endfor %}
+  </div>
+  {% endif %}
+  <div class="shop">
+  <form id="filters" class="filters" method="get">
+    <div style="display:flex;justify-content:space-between;align-items:center"><h4 style="margin:0">Filters</h4><button type="button" id="filter-close" class="icon-btn" style="display:none" aria-label="Close filters">×</button></div>
+    <input type="hidden" name="q" value="{{ q }}"><input type="hidden" name="sort" value="{{ sort }}">
+    <h4>Section</h4>
+    <label class="opt"><input type="radio" name="group" value="" {% if not group %}checked{% endif %} data-autosubmit> Everything</label>
+    {% for g in nav_groups %}<label class="opt"><input type="radio" name="group" value="{{ g.key }}" {% if group == g.key %}checked{% endif %} data-autosubmit> {{ g.label }}</label>{% endfor %}
+    <h4>Category</h4>
+    <label class="opt"><input type="radio" name="category" value="" {% if not cat %}checked{% endif %} data-autosubmit> All categories</label>
+    {% for c in nav_top %}
+      <label class="opt"><input type="radio" name="category" value="{{ c.slug }}" {% if cat == c.slug %}checked{% endif %} data-autosubmit> {{ c.name }}</label>
+      {% for k in c.kids %}<label class="opt sub"><input type="radio" name="category" value="{{ k.slug }}" {% if cat == k.slug %}checked{% endif %} data-autosubmit> {{ k.name }}</label>{% endfor %}
+    {% endfor %}
+    <h4>Price (₹)</h4>
+    <div class="row"><input type="number" name="min" min="0" placeholder="Min" value="{{ pmin }}"><input type="number" name="max" min="0" placeholder="Max" value="{{ pmax }}"></div>
+    <h4>Availability</h4>
+    <label class="opt"><input type="checkbox" name="instock" value="1" {% if instock %}checked{% endif %} data-autosubmit> In stock only</label>
+    <button class="btn btn-block" style="margin-top:16px" type="submit">Apply</button>
+    <a class="btn btn-outline btn-block" style="margin-top:8px" href="{% url 'product_list' %}">Clear all</a>
+  </form>
+  <div>
+    <div class="toolbar">
+      <div><button type="button" id="filter-toggle" class="btn btn-outline btn-sm filter-toggle">Filters</button> <span style="color:var(--muted)">{{ total }} product{{ total|pluralize }}</span></div>
+      <form method="get">{% for k, v in request.GET.items %}{% if k != 'sort' and k != 'page' %}<input type="hidden" name="{{ k }}" value="{{ v }}">{% endif %}{% endfor %}
+        <select name="sort" onchange="this.form.submit()" aria-label="Sort products">
+          <option value="new" {% if sort == 'new' %}selected{% endif %}>Newest first</option>
+          <option value="low" {% if sort == 'low' %}selected{% endif %}>Price: low to high</option>
+          <option value="high" {% if sort == 'high' %}selected{% endif %}>Price: high to low</option>
+          <option value="name" {% if sort == 'name' %}selected{% endif %}>Name A–Z</option></select></form>
+    </div>
+    {% if q or cat or group or pmin or pmax or instock %}<div class="chips">
+      {% if q %}<span class="chip">“{{ q }}”</span>{% endif %}{% if group %}<span class="chip">{{ section.name }}</span>{% endif %}{% if active_cat %}<span class="chip">{{ active_cat.name }}</span>{% endif %}
+      {% if pmin or pmax %}<span class="chip">₹{{ pmin|default:"0" }} – {{ pmax|default:"any" }}</span>{% endif %}{% if instock %}<span class="chip">In stock</span>{% endif %}</div>{% endif %}
+    {% if page.object_list %}
+      <div class="grid" style="grid-template-columns:repeat(3,1fr)" id="pgrid">{% for p in page %}{% include "shop/_card.html" %}{% endfor %}</div>
+      {% if page.paginator.num_pages > 1 %}<nav class="pager" aria-label="Pages">
+        {% if page.has_previous %}<a href="?{{ querystring }}&page={{ page.previous_page_number }}">‹ Prev</a>{% endif %}
+        {% for n in page.paginator.page_range %}{% if n == page.number %}<span class="cur">{{ n }}</span>{% else %}<a href="?{{ querystring }}&page={{ n }}">{{ n }}</a>{% endif %}{% endfor %}
+        {% if page.has_next %}<a href="?{{ querystring }}&page={{ page.next_page_number }}">Next ›</a>{% endif %}</nav>{% endif %}
+    {% else %}
+      <div class="empty"><h2>No products found</h2><p>Try a different search, or clear some filters.</p><a class="btn" href="{% url 'product_list' %}">Show all products</a></div>
+    {% endif %}
+  </div>
+</div></div></section>
+<style>@media(max-width:1024px){#filter-close{display:inline-block!important}#pgrid{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:640px){#pgrid{grid-template-columns:repeat(2,1fr)!important}}</style>
+{% endblock %}

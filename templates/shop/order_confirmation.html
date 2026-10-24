@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% load static artiverse %}
+{% block title %}Order placed – {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="section"><div class="container">
+  <div class="success-box">
+    <div class="tick"><svg viewBox="0 0 52 52"><path d="M14 27 l8 8 l16 -18"/></svg></div>
+    <h1>Thank you, {{ order.full_name }}!</h1>
+    <p style="color:var(--muted)">Your order has been placed successfully.</p>
+    <div class="order-no">#{{ order.order_number }}</div>
+    <p>{% if order.payment_method == 'cod' %} Please keep <b>₹{{ order.total|floatformat:0 }}</b> ready – you'll pay when your order is delivered.{% else %} Demo payment recorded (simulated – no money was charged).{% endif %}</p>
+  </div>
+  <div class="order-card" style="max-width:720px;margin:0 auto 16px">
+    <h3 style="margin-bottom:10px">Order summary</h3>
+    {% for i in order.items.all %}<div class="mini">{% if i.image %}<img src="{{ i.image|photo }}" alt="">{% endif %}<div>{{ i.name }}<br><small>Qty {{ i.quantity }}{% if i.size %} · Size {{ i.size }}{% endif %} · ₹{{ i.price|floatformat:0 }} each</small></div><b>₹{{ i.subtotal|floatformat:0 }}</b></div>{% endfor %}
+    <div class="summary" style="box-shadow:none;padding:12px 0 0;position:static">
+      <div class="line"><span>Subtotal</span><span>₹{{ order.subtotal|floatformat:0 }}</span></div>
+      <div class="line"><span>Shipping</span><span>{% if order.shipping %}₹{{ order.shipping|floatformat:0 }}{% else %}FREE{% endif %}</span></div>
+      <div class="line total"><span>Total</span><span>₹{{ order.total|floatformat:0 }}</span></div></div>
+    <p style="margin-top:14px;color:var(--muted)"><b>Delivering to:</b> {{ order.full_name }}, {{ order.address }}, {{ order.city }}, {{ order.state }} – {{ order.postal_code }} ·  {{ order.phone }}</p>
+  </div>
+  <div style="text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a class="btn" href="{% url 'order_detail' order.order_number %}">Track order</a>
+    <a class="btn btn-outline" href="{% url 'product_list' %}">Continue shopping</a>
+  </div>
+</div></section>
+{% endblock %}

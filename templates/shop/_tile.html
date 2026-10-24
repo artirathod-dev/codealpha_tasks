@@ -1,0 +1,1 @@
+{% load artiverse %}<a class="cat-tile reveal" href="{{ c.get_absolute_url }}"><img src="{{ c.image|photo }}" alt="{{ c.name }}" loading="lazy"><span class="lab"><b>{{ c.name }}</b><small>{{ c.total|default:c.count }} piece{{ c.total|default:c.count|pluralize }} · {{ c.tagline }}</small></span></a>
