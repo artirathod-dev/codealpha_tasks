@@ -1,0 +1,18 @@
+{
+  "name": "artiverse",
+  "version": "1.0.0",
+  "description": "Artiverse - a mini social media platform (Express + SQLite + vanilla JS)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "reset": "node -e \"require('fs').rmSync('artiverse.db',{force:true});require('fs').rmSync('artiverse.db-wal',{force:true});require('fs').rmSync('artiverse.db-shm',{force:true});console.log('Database reset. Run npm start to re-seed demo data.')\""
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

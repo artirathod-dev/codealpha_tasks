@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Artiverse - Connect · Create · Share</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235b3df5' d='M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- LOGIN / SIGN UP -->
+<section id="auth" class="hidden">
+  <div class="auth-hero">
+    <div class="hero-brand"><span class="logo-lg"></span><h1>Artiverse</h1></div>
+    <p>Connect &bull; Create &bull; Share</p>
+    <em>Be yourself. Share your world.</em>
+  </div>
+  <div class="auth-box">
+    <div class="auth-card">
+      <div class="tabs auth-tabs">
+        <button class="tab active" data-authtab="login">Login</button>
+        <button class="tab" data-authtab="signup">Sign Up</button>
+      </div>
+      <form id="loginForm" autocomplete="on">
+        <label>Email or username
+          <input name="identifier" placeholder="Enter your email or username" required></label>
+        <label>Password
+          <span class="pw"><input name="password" type="password" placeholder="Enter your password" required>
+          <button type="button" class="eye" data-eye>Show</button></span></label>
+        <div class="row between small">
+          <label class="check"><input type="checkbox" name="remember" checked> Remember me</label>
+          <a href="#" data-act="forgot">Forgot password?</a>
+        </div>
+        <button class="btn block">Login</button>
+        <p class="hint">Demo account: <b>arti@example.com</b> / <b>arti123</b></p>
+      </form>
+      <form id="signupForm" class="hidden" autocomplete="on">
+        <label>Full name<input name="name" placeholder="Arti Rathod" required></label>
+        <label>Username<input name="username" placeholder="arti_rathod" required></label>
+        <label>Email<input name="email" type="email" placeholder="you@example.com" required></label>
+        <label>Password
+          <span class="pw"><input name="password" type="password" placeholder="At least 6 characters" required minlength="6">
+          <button type="button" class="eye" data-eye>Show</button></span></label>
+        <button class="btn block">Create account</button>
+      </form>
+      <div class="divider"><span>or continue with</span></div>
+      <div class="row gap social">
+        <button class="btn ghost block" data-act="social">Google</button>
+        <button class="btn ghost block" data-act="social">GitHub</button>
+      </div>
+      <p id="authSwitch" class="small center-text">Don't have an account? <a href="#" data-authtab="signup">Sign Up</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+  <aside class="sidebar">
+    <a class="brand" href="#/home"><span class="logo"></span><b>Artiverse</b></a>
+    <nav id="nav"></nav>
+    <a class="me-chip" id="meChip" href="#/profile"></a>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <a class="brand mobile-brand" href="#/home"><span class="logo"></span><b>Artiverse</b></a>
+      <form id="searchForm" class="search"><span id="searchIcon"></span><input id="searchInput" placeholder="Search posts, users..." autocomplete="off"></form>
+      <div class="top-actions">
+        <button class="icon" id="themeBtn" title="Toggle dark mode"></button>
+        <a class="icon" href="#/notifications" id="bellBtn" title="Notifications"></a>
+        <a href="#/profile" id="topAvatar"></a>
+      </div>
+    </header>
+    <main id="view"></main>
+  </div>
+  <nav class="bottomnav" id="bottomNav"></nav>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toast"></div>
+<script src="js/app.js"></script>
+</body>
+</html>
